@@ -2,6 +2,10 @@ $color-bg: #f0eeec;
 $color-card: #fff;
 $color-border: #332f2f;
 $color-answer: #332f2f;
+$color-label: #a8a7a7;
+$color-focus: #0d8b42;
+$color-button: #0d8b42;
+$color-button-text: #fff;
 
 body,
 * {
@@ -15,15 +19,75 @@ body,
 body {
   background-color: $color-bg;
 
-  .CardsWrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-gap: 20px;
+  .wrapper {
     margin-left: auto;
     margin-right: auto;
     padding: 15px;
     max-width: 1330px;
     width: 100%;
+  }
+
+  header {
+    padding: 10px 0;
+    background-color: $color-card;
+
+    .HeaderForm {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      max-width: 900px;
+
+      > label {
+        display: block;
+        padding-bottom: 10px;
+  
+        > span {
+          display: block;
+          padding-bottom: 5px;
+          font-size: 12px;
+          color: $color-label;
+        }
+
+        > select,
+        > input {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid $color-border;
+          border-radius: 5px;
+
+          &:focus {
+            outline: none;
+            border-color: $color-focus;
+          }
+        }
+      }
+
+      > button {
+        padding: 8px 15px;
+        font-size: 16px;
+        color: $color-button-text;
+        background-color: $color-button;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease-out;
+        cursor: pointer;
+
+        &:hover {
+          background-color: darken($color-button, 5);
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+
+  .CardsWrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 20px;
+    align-items: center;
     perspective: 1500px;
 
     .Card {
@@ -41,7 +105,6 @@ body {
         flex-direction: column;
         justify-content: center;
         padding: 15px;
-        height: 100%;
         backface-visibility: hidden;
       }
 

@@ -1,20 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-
-const decodeText = text => {
-  const textArea = document.createElement('textarea')
-  textArea.innerHTML = text
-  return textArea.value
-}
 
 const FlipCard = ({ card }) => {
   const [ flip, setFlip ] = useState(false)
+  const [ height, setHeight ] = useState('initial')
+
   const { question, correct_answer, incorrect_answers } = card
   const answers = [ ...incorrect_answers, correct_answer].sort(() => Math.random() - 0.5)
 
+  const cardFront = useRef()
+  const cardBack = useRef()
+
+  const decodeText = text => {
+    const textArea = document.createElement('textarea')
+    textArea.innerHTML = text
+    return textArea.value
+  }
+
+  const setMaxHeight = () => {
+    const cardFrontHeight = cardFront.current.getBoundingClientRect().height
+    const cardBackHeight = cardBack.current.getBoundingClientRect().height
+
+    setHeight(Math.max(cardFrontHeight, cardBackHeight, 100))
+  }
+
+  useEffect(setMaxHeight, [question, correct_answer, incorrect_answers])
+
+  useEffect(() => {
+    window.addEventListener('resize', setMaxHeight)
+    return () => window.removeEventListener('resize', setMaxHeight)
+  }, [])
+
   return (
-    <div className={ `Card ${ flip && 'Fliped' }` } onClick={ () => setFlip(flip => !flip) }>
-      <div className="CardFront">
+    <div
+      className={ `Card ${ flip ? 'Fliped' : '' }` }
+      style={{ height: height }} 
+      onClick={ () => setFlip(flip => !flip) }
+    >
+      <div className="CardFront" ref={ cardFront }>
         <div className="Question">
           { decodeText(question) }
         </div>
@@ -22,7 +45,7 @@ const FlipCard = ({ card }) => {
           { answers.map((answer, index) => <li key={ `${ index }_${ Math.random().toString(36).substr(2, 9) }` }>{ decodeText(answer) }</li>) }
         </ul>
       </div>
-      <div className="CardBack">
+      <div className="CardBack" style={{ height: height }} ref={ cardBack }>
         { decodeText(correct_answer) }
       </div>
     </div>

@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from 'react'
 import FlipCard from './FlipCard'
+import PropTypes from 'prop-types'
 
-const FlipCardList = () => {
+const FlipCardList = ({ parameters }) => {
   const [ flipCardList, setFlipCardList ] = useState([])
 
-  const handleGetQuestions = async () => {
-    try {
-      const apiResponse = await fetch('https://opentdb.com/api.php?amount=10')
-      const questions = await apiResponse.json()
-      setFlipCardList(questions.results)
-    } catch (error) {
-      console.error(error)
+  const handleGetQuestions = async (parameters) => {
+    if (parameters.length > 0) {
+      try {
+        const apiResponse = await fetch(`https://opentdb.com/api.php?${ parameters }`)
+        const questions = await apiResponse.json()
+        setFlipCardList(questions.results)
+      } catch (error) {
+        console.error(error)
+      }
     }
   } 
 
   useEffect(() => {
-    handleGetQuestions()
-  }, [])
+    handleGetQuestions(parameters)
+  }, [parameters])
 
   return (
-    <div className="CardsWrapper">
+    <div className="wrapper CardsWrapper">
       { flipCardList.map((flipCard, index) => <FlipCard key={ `${ index }_${ Math.random().toString(36).substr(2, 9) }` } card={ flipCard } />) }
     </div>
   )
+}
+
+FlipCardList.propTypes = {
+  parameters: PropTypes.string
+}
+
+FlipCardList.defaultProps = {
+  parameters: ''
 }
 
 export default FlipCardList
